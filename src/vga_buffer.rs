@@ -72,7 +72,6 @@ impl Writer {
                 });
                     self.column_position+=1;
             },
-            
         }
     }
     fn new_line(&mut self){
