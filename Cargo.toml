@@ -4,8 +4,13 @@ version = "0.1.0"
 edition = "2024"
 
 [package.metadata.bootimage]
-test-args = []
 test-success-exit-code = 33
+test-args = [
+    "-device", "isa-debug-exit,iobase=0xf4,iosize=0x04", "-serial", "stdio",
+    "-display","none"
+]
+test-timeout=300
+
 
 [[bin]]
 name = "blog_os"
@@ -22,3 +27,4 @@ uart_16550 = "0.6.0"
 [dependencies.lazy_static]
 version = "1.0"
 features = ["spin_no_std"]
+
