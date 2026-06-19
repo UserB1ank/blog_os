@@ -38,5 +38,5 @@ use blog_os::serial_print;
 #[test_case]
 fn should_fail(){
     serial_println!("should_fail");
-    assert_eq!(0,0);
+    assert_eq!(0,1);
 }
