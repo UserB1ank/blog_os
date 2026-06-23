@@ -6,15 +6,16 @@
 #![reexport_test_harness_main = "test_main"]
 
 use core::panic::PanicInfo;
-use blog_os::println;
+use blog_os::{hlt_loop, print, println};
 
 #[unsafe(no_mangle)]
 pub extern "C" fn _start() -> ! {
     println!("Hello World{}", "!");
     blog_os::init();
+    println!("It didn't crash");
     #[cfg(test)]
     test_main();
-    loop {}
+    hlt_loop();
 }
 
 /// This function is called on panic.
@@ -22,7 +23,7 @@ pub extern "C" fn _start() -> ! {
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     println!("{}", info);
-    loop {}
+    hlt_loop();
 }
 
 #[cfg(test)]

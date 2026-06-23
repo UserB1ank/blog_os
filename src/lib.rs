@@ -6,13 +6,12 @@
 #![reexport_test_harness_main = "test_main"]
 
 use core::panic::PanicInfo;
+use crate::interrupts::PIC_1_OFFSET;
 
 pub mod serial;
 pub mod vga_buffer;
 pub mod interrupts;
 pub mod gdt;
-
-//GDT
 
 
 
@@ -20,6 +19,8 @@ pub mod gdt;
 pub fn init(){
     gdt::init();
     interrupts::init_idt();
+    unsafe {interrupts::PIC.lock().initialize()};
+    x86_64::instructions::interrupts::enable();
 }
 
 
@@ -52,7 +53,7 @@ pub fn test_panic_handler(info: &PanicInfo) -> ! {
     serial_println!("[failed]\n");
     serial_println!("Error: {}\n", info);
     exit_qemu(QemuExitCode::Failed);
-    loop {}
+    hlt_loop();
 }
 
 
@@ -84,10 +85,17 @@ pub fn exit_qemu(exit_code:QemuExitCode){
 pub extern "C" fn _start() -> ! {
     init();
     test_main();
-    loop {}
+    hlt_loop();
 }
 
 #[test_case]
 fn test_breakpoint_exception(){
     x86_64::instructions::interrupts::int3();
+}
+
+//hlt loop
+pub fn hlt_loop()->!{
+    loop {
+        x86_64::instructions::hlt();
+    }
 }
